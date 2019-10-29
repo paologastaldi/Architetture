@@ -9,9 +9,20 @@
     X: .byte 1, 2, 3, 4, 5, 6, 7, 8
         .byte 1, 2, 3, 4, 5, 6, 7, 8
         .byte 1, 2, 3, 4, 5, 6, 7, 8
-        .byte 1, 2, 3, 4, 5, 6 ; vettore di 30 elementi
+        .byte 1, 2, 3, 4, 5, 6 ; vettore di 30 elementi => 29 confronti
     even_counter: .byte 0
     odd-counter: .byte 0
+	
+	; 1^2 = 3: pari
+	; 2^3 = 1: dispari
+	; 3^4 = 7: dispari
+	; 4^5 = 1: dispari
+	; 5^6 = 3: pari
+	; 6^7 = 1: dispari
+	; 7^8 = F: pari
+	; 8^1 = 9: pari
+	; 4 pari, 4 dispari
+	; totale: 15 dispari, 14 pari (29 confronti)
     
 .text
     init:
@@ -46,7 +57,7 @@
 		    daddi r29, r29, -1
 		    bnez r29, bitLoop
 	    
-	    and r28, r30, r31 ; verifico se il numero di bit a 1 e' dispari
+	    andi r28, r30, 1 ; verifico se il numero di bit a 1 e' dispari
 	    daddi r27, r0, 1
 	    dadd r26, r0, r0
 	    daddi r25, r0, 1
@@ -55,8 +66,7 @@
 	    dadd r3, r3, r25 ; incremento contatore pari
 	    dadd r4, r4, r26 ; incremento contatore dispari
         
-        dadd r5, r0, r6
-        lb r6, X(r2)
+        dadd r5, r0, r6 ; shift da r6 a r5
         
         daddi r1, r1, -1
         bnez r1, loop

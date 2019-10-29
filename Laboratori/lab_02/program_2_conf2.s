@@ -5,8 +5,9 @@
 ; nella formula di Amdahl
 ; frazione: # colpi di clock
 
+; configurazione 2:
 ; add FP: 6 clock cycle
-; mul FP: 8 clock cycle
+; mul FP: 8 -> 4 clock cycle
 ; div FP: 24 clock cycle
 
 ; v5 non contiene valori = 0
@@ -50,29 +51,30 @@
         l.d f1, v1(r2) ;             F D E M W +1
         l.d f2, v2(r2) ;               F D E M W +1
         
-        mul.d f7, f1, f2 ;               F D m m m m m m m m M W +8
+        mul.d f7, f1, f2 ;               F D m m m m M W 4
 		
-        l.d f3, v3(r2) ;                   F D E M W +0      |
-        l.d f4, v4(r2) ;                     F D E M W +0    |
+        l.d f3, v3(r2) ;                   F D E M W +0
+        l.d f4, v4(r2) ;                     F D E M W +0
 		
-        add.d f5, f7, f3 ;                     F D s s s s s a a a a a a M W +6
-                         ;                                               |
-        mul.d f8, f3, f4 ;                       F D m m m m m m m m M W +0
-        div.d f6, f8, f5 ;                         F D s s s s s s s s s d d d d d d d d d d d d d d d d d d d d d d d d M W +26
+        add.d f5, f7, f3 ;                     F D s a a a a a a M W +7
+        
+        mul.d f8, f3, f4 ;                       F D m m m m M W +0
+        div.d f6, f8, f5 ;                         F D s s s s s d d d d d d d d d d d d d d d d d d d d d d d d M W +22
 		
 		daddi r1, r1, -1 ;                           F D E M W +0
 		
         s.d f5, v5(r2) ;                               F D E M W +0
-        s.d f6, v6(r2);                                  F D s s s s s s s s s s s s s s s s s s s s s s s s s s s s E M W+1
+        s.d f6, v6(r2);                                  F D s s s s s s s s s s s s s s s s s s s s s s s s s s E M W+1
         
-        daddi r2, r2, 8 ;                                  F D s s s s s s s s s s s s s s s s s s s s s s s s s s s s E M W +1
+        daddi r2, r2, 8 ;                                  F D s s s s s s s s s s s s s s s s s s s s s s s s s s E M W +1
 		
         bnez r1, loop ; +1
     
     halt
 	
 ; main: 5+1 = 6
-; loop: 1+1+8+0+0+6+0+26+0+0+1+1+1 = 45
-; totale: 6 +45*30 = 1356 (+1 halt)
+; loop: 1+1+4+0+0+7+0+22+0+0+1+1+1 = 38
+; totale: 6 +38*30 = 1146 (+1 halt) 
 
-; calcolato da winMips: 1356 (con halt)
+; calcolato da winMips: 1236 (con halt)
+; mancano 90 clock cycle, 3 per ogni ciclo

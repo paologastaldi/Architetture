@@ -2,12 +2,13 @@
 ; lab_02, program_2.s
 ; 22-10-19
 
-; nella formula di Amdahl
-; frazione: # colpi di clock
-
-; add FP: 6 clock cycle
+; configurazione 1:
+; add FP: 6 -> 3 clock cycle
 ; mul FP: 8 clock cycle
 ; div FP: 24 clock cycle
+
+; nella formula di Amdahl
+; frazione: # colpi di clock
 
 ; v5 non contiene valori = 0
 
@@ -55,14 +56,14 @@
         l.d f3, v3(r2) ;                   F D E M W +0      |
         l.d f4, v4(r2) ;                     F D E M W +0    |
 		
-        add.d f5, f7, f3 ;                     F D s s s s s a a a a a a M W +6
-                         ;                                               |
-        mul.d f8, f3, f4 ;                       F D m m m m m m m m M W +0
-        div.d f6, f8, f5 ;                         F D s s s s s s s s s d d d d d d d d d d d d d d d d d d d d d d d d M W +26
+        add.d f5, f7, f3 ;                     F D s s s s s a a a M W +3
+                         ;										   | 
+        mul.d f8, f3, f4 ;                       F D m m m m m m m m M W +1
+        div.d f6, f8, f5 ;                         F D s s s s s s s d d d d d d d d d d d d d d d d d d d d d d d d M W +24
 		
 		daddi r1, r1, -1 ;                           F D E M W +0
 		
-        s.d f5, v5(r2) ;                               F D E M W +0
+        s.d f5, v5(r2) ;                               F D s s s s E M W +0
         s.d f6, v6(r2);                                  F D s s s s s s s s s s s s s s s s s s s s s s s s s s s s E M W+1
         
         daddi r2, r2, 8 ;                                  F D s s s s s s s s s s s s s s s s s s s s s s s s s s s s E M W +1
@@ -72,7 +73,8 @@
     halt
 	
 ; main: 5+1 = 6
-; loop: 1+1+8+0+0+6+0+26+0+0+1+1+1 = 45
-; totale: 6 +45*30 = 1356 (+1 halt)
+; loop: 1+1+8+0+0+3+1+24+0+0+1+1+1 = 41
+; totale: 6 +41*30 = 1236 (+1 halt)
 
-; calcolato da winMips: 1356 (con halt)
+; calcolato da winMips: 1296 (con halt)
+; nei calcoli a mano mancano 2 clock cycle per ogni ciclo del loop (mancano 60 clock cycle)
