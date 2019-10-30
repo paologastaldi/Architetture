@@ -1,5 +1,5 @@
 ; Gastaldi Paolo
-; lab_02, program_2.s
+; lab_02, program_2_conf3.s
 ; 22-10-19
 
 ; nella formula di Amdahl
@@ -50,30 +50,31 @@
     loop:
         l.d f1, v1(r2) ;             F D E M W +1
         l.d f2, v2(r2) ;               F D E M W +1
-        
-        mul.d f7, f1, f2 ;               F D m m m m m m m m M W +8
-		
-        l.d f3, v3(r2) ;                   F D E M W +0      |
-        l.d f4, v4(r2) ;                     F D E M W +0    |
-		
-        add.d f5, f7, f3 ;                     F D s s s s s a a a a a a M W +6
-        
-        mul.d f8, f3, f4 ;                       F D m m m m m m m m M W +0
-        div.d f6, f8, f5 ;                         F D s s s s s s s s s d d d d d d d d d d d d M W +14
+        ;									   |
+        mul.d f7, f1, f2 ;               F D s m m m m m m m m M W +9
+		;													   |
+        l.d f3, v3(r2) ;                   F D E M W +0        |
+        l.d f4, v4(r2) ;                     F D E M W +0      |
+		;											 |		   |
+        add.d f5, f7, f3 ;                     F D s s s s s s a a a a a a M W +6
+        ;											 |					   |
+        mul.d f8, f3, f4 ;                       F D m m m m m m m m M W +0|
+        div.d f6, f8, f5 ;                         F D s s s s s s s s s s d d d d d d d d d d d d M W +12
 		
 		daddi r1, r1, -1 ;                           F D E M W +0
 		
         s.d f5, v5(r2) ;                               F D E M W +0
-        s.d f6, v6(r2);                                  F D s s s s s s s s s s s s s s s s s s E M W +1
+        s.d f6, v6(r2);                                  F D s s s s s s s s s s s s s s s s s s s E M W +1
         
-        daddi r2, r2, 8 ;                                  F D s s s s s s s s s s s s s s s s s s E M W +1
+        daddi r2, r2, 8 ;                                  F D s s s s s s s s s s s s s s s s s s s E M W +1
 		
         bnez r1, loop ; +1
+		; +1 (ciclo perso, eccetto per l'ultima iterazione)
     
-    halt
+    halt ; +0 (gia' contato prima)
 	
 ; main: 5+1 = 6
-; loop: 1+1+8+0+0+6+0+14+0+0+1+1+1 = 33
-; totale: 6 +33*30 = 996 (+1 halt)
+; loop: 1+1+9 +0+0+6+0 +12+0+0+1+1 +1+1 = 33
+; totale: 6 +33*30 = 996 clock cycle
 
-; calcolato da winMips: 996 (con halt)
+; calcolato da winMips: 996 clock cycle
