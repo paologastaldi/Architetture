@@ -1,0 +1,338 @@
+﻿Architetture dei Sistemi di Elaborazione
+02GOLOV [A-L]
+	Delivery date: 
+Wednesday, November 20, 2019
+	Laboratory 
+4
+	Expected delivery of lab_04.zip must include:
+* this document compiled possibly in pdf format. 
+	
+
+1. Introducing gem5
+gem5 is freely available at: http://gem5.org/
+the laboratory version uses the ALPHA CPU model previously compiled and placed at:
+/opt/gem5/
+	
+
+the ALPHA compilation chain is available at:
+/opt/alphaev67-unknown-linux-gnu/bin/ 
+	
+
+   1. Write a hello world C program (hello.c). Then compile the program, using the ALPHA compiler, by running this command:
+~/my_gem5Dir$ /opt/alphaev67-unknown-linux-gnu/bin/alphaev67-unknown-linux-gnu-gcc -static -o hello hello.c
+	
+
+   2. Simulate the program 
+~/my_gem5Dir$ /opt/gem5/build/ALPHA/gem5.opt /opt/gem5/configs/example/se.py -c hello
+	In this simulation, gem5 uses AtomicSimpleCPU by default.
+
+
+   3. Check the results 
+your simulation output should be similar than the one provided in the following: 
+~/my_gem5Dir$ /opt/gem5/build/ALPHA/gem5.opt /opt/gem5/configs/example/se.py -c hello
+gem5 Simulator System.  http://gem5.org
+gem5 is copyrighted software; use the --copyright option for details.
+
+
+gem5 compiled Sep 20 2017 12:34:54
+gem5 started Jan 19 2018 10:57:58
+gem5 executing on this_pc, pid 5477
+command line: /opt/gem5/build/ALPHA/gem5.opt /opt/gem5/configs/example/se.py -c hello
+
+
+Global frequency set at 1000000000000 ticks per second
+warn: DRAM device capacity (8192 Mbytes) does not match the address range assigned (512 Mbytes)
+0: system.remote_gdb.listener: listening for remote gdb #0 on port 7000
+warn: ClockedObject: More than one power state change request encountered within the same simulation tick
+**** REAL SIMULATION ****
+info: Entering event queue @ 0.  Starting simulation...
+info: Increasing stack size by one page.
+hola mundo!
+Exiting @ tick 2623000 because target called exit()
+	
+
+      * Check the output folder 
+in your working directory, gem5 creates an output folder (m5out), and saves there 3 files: config.ini, config.json, and stats.txt. In the following, some extracts of the produced files are reported.
+
+
+      * Statistics (stats.txt)
+ 
+---------- Begin Simulation Statistics ----------
+sim_seconds            0.000003      # Number of seconds simulated
+sim_ticks               2623000      # Number of ticks simulated
+final_tick              2623000      # Number of ticks from beginning of simulation 
+sim_freq           1000000000000     # Frequency of simulated ticks
+host_inst_rate          1128003      # Simulator instruction rate (inst/s)
+host_op_rate            1124782      # Simulator op (including micro ops) rate(op/s)
+host_tick_rate        564081291      # Simulator tick rate (ticks/s)
+host_mem_usage           640392      # Number of bytes of host memory used
+host_seconds               0.00      # Real time elapsed on the host
+sim_insts                  5217      # Number of instructions simulated
+sim_ops                    5217      # Number of ops (including micro ops) simulated
+... ... ...
+system.cpu_clk_domain.clock 500      # Clock period in ticks
+... ... ...
+	
+
+      * Configuration file (config.ini)
+
+
+... ... ...
+[system.cpu]
+type=AtomicSimpleCPU
+children=dtb interrupts isa itb tracer workload
+branchPred=Null
+checker=Null
+clk_domain=system.cpu_clk_domain
+cpu_id=0
+default_p_state=UNDEFINED
+do_checkpoint_insts=true
+do_quiesce=true
+do_statistics_insts=true
+dtb=system.cpu.dtb
+eventq_index=0
+fastmem=false
+function_trace=false
+	
+
+2. Simulate the same program using different CPU models. 
+
+
+Help command: 
+3. ~/my_gem5Dir$ /opt/gem5/build/ALPHA/gem5.opt /opt/gem5/configs/example/se.py -h 
+	
+
+List the CPU available models:
+~/my_gem5Dir$ /opt/gem5/build/ALPHA/gem5.opt /opt/gem5/configs/example/se.py --list-cpu-types 
+	
+
+   4. TimingSimpleCPU simple CPU that includes an initial memory model interaction
+~/my_gem5Dir$ /opt/gem5/build/ALPHA/gem5.opt /opt/gem5/configs/example/se.py --cpu-type=TimingSimpleCPU -c hello
+	
+
+   5. MinorCPU the CPU is based on an in order pipeline including caches
+~/my_gem5Dir$ /opt/gem5/build/ALPHA/gem5.opt /opt/gem5/configs/example/se.py --cpu-type=MinorCPU --caches -c hello
+	
+
+   6. DerivO3CPU is a superscalar processor
+~/my_gem5Dir$ /opt/gem5/build/ALPHA/gem5.opt /opt/gem5/configs/example/se.py --cpu-type=DerivO3CPU --caches -c hello
+	
+
+Create a table gathering for every simulated CPU the following information:
+* Ticks 
+* Number of instructions simulated 
+* Number of CPU Clock Cycles
+   * Number of CPU clock cycles = Number of ticks / CPU Clock period in ticks (usually 500)
+* Clock Cycles per Instruction (CPI)        
+   * CPI = CPU Clock Cycles / instructions simulated
+* Number of instructions committed
+* Host time in seconds
+* Number of instructions Fetch Unit has encountered (this should be gathered for the out-of-order processor only).
+
+
+TABLE1: Hello program behavior on different CPU models
+ CPU
+Parameters
+	AtomicSimpleCPU
+	TimingSimpleCPU
+	MinorCPU
+	DeriveO3CPU
+	Ticks
+	
+
+	
+
+	
+
+	
+
+	CPU clock domain
+	
+
+	
+
+	
+
+	
+
+	Clock Cycles
+	
+
+	
+
+	
+
+	
+
+	Instructions simulated
+	
+
+	
+
+	
+
+	
+
+	CPI
+	
+
+	
+
+	
+
+	
+
+	Committed instructions
+	
+
+	
+
+	
+
+	
+
+	Host seconds
+	
+
+	
+
+	
+
+	
+
+	Instructions encountered by Fetch Unit
+	
+
+	
+
+	
+
+	
+
+	
+
+3. Download the test programs related to the automotive sector available in MiBench: basicmath, bitcount, qsort, and susan. These programs are freely available at http://vhosts.eecs.umich.edu/mibench/
+1. Modify the program basicmath_small, reducing the number of iterations and therefore the computational time (line 44):  
+
+
+   2. compile the program basicmath_small using the provided Makefile using the ALPHA compiler
+        hint:
+add a variable to the Makefile in order to use the ALPHA compiler:
+
+
+CROSS_COMPILE = /opt/alphaev67-unknown-linux-gnu/bin/alphaev67-unknown-linux-gnu
+CC=$(CROSS_COMPILE)-gcc
+
+
+and substitute all the gcc occurrences with the new variable as follows:
+
+
+gcc → $(CC) 
+	
+
+   3. Simulate the program basicmath_small and the default processor (AtomicSimpleCPU), saving the output results.  
+   4. Simulate the program using the gem5 different CPU models and collect the following information: 
+   1. Number of instructions simulated 
+   2. Number of CPU Clock Cycles
+   3. Clock Cycles per Instruction (CPI)        
+   4. Number of instructions committed
+   5. Host time in seconds
+   6. Prediction ratio for Conditional Branches (Number of Incorrect Predicted Conditional Branches /  Number of Predicted Conditional Branches)
+   7. BTB hits
+   8. Number of instructions Fetch Unit has encountered.
+Parameters f , g and h should be gathered exclusively for the out-of-order processor. 
+
+
+
+
+
+
+TABLE2: basicmath_small program behavior on different CPU models
+ CPUs
+Parameters
+	AtomicSimpleCPU
+	TimingSimpleCPU
+	MinorCPU
+	DerivO3CPU
+	Ticks
+	
+
+	
+
+	
+
+	
+
+	CPU clock domain
+	
+
+	
+
+	
+
+	
+
+	Clock Cycles
+	
+
+	
+
+	
+
+	
+
+	Instructions simulated
+	
+
+	
+
+	
+
+	
+
+	CPI
+	
+
+	
+
+	
+
+	
+
+	Committed instructions
+	
+
+	
+
+	
+
+	
+
+	Host seconds
+	
+
+	
+
+	
+
+	
+
+	Prediction ratio
+	
+
+	
+
+	
+
+	
+
+	BTB hits
+	
+
+	
+
+	
+
+	
+
+	Instructions encountered by Fetch Unit
