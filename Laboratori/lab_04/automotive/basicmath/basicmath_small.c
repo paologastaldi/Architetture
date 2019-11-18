@@ -1,3 +1,11 @@
+/*
+Gastaldi Paolo
+s277393
+lab_04 - basicmath_small.c1
+
+modifiche al codice segnate a fianco come commenti
+*/
+
 #include "snipmath.h"
 #include <math.h>
 
@@ -42,10 +50,10 @@ int main(void)
     printf(" %f",x[i]);
   printf("\n");
   /* Now solve some random equations */
-  for(a1=1;a1<10;a1++) {
-    for(b1=10;b1>0;b1--) {
-      for(c1=5;c1<15;c1+=0.5) {
-	for(d1=-1;d1>-11;d1--) {
+  for(a1=1;a1<5;a1++) { // a1<10 -> a1<5
+    for(b1=5;b1>0;b1--) { // b1=10 -> b1=5
+      for(c1=5;c1<8;c1+=0.5) { // c1<15 -> c1<8
+	for(d1=-1;d1>-3;d1--) { //d1>-11 -> d1>-3
 	  SolveCubic(a1, b1, c1, d1, &solutions, x);  
 	  printf("Solutions:");
 	  for(i=0;i<solutions;i++)
